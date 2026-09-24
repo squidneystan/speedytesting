@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="monetag" content="c4930a74f4ecf7f1f2c08a6a9aaf3657">
+  <title>Speedometer – Internet Speed Test</title>
+  <!-- Adsterra Scripts -->
+  <script src="https://pl31496156.profitableratecpmnetwork.com/0b/d7/f5/0bd7f57a4fa5e0a3feb00c5c0a506416.js"></script>
+  <script src="https://pl31496155.profitableratecpmnetwork.com/26/8d/ad/268dada7ed67d8f17e7dbb7037685bd9.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #0051ba;
+      --primary-light: #e6f1fb;
+      --success: #059669;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --text-dark: #1f2937;
+      --text-light: #6b7280;
+      --text-muted: #9ca3af;
+      --border: #e5e7eb;
+      --bg: #ffffff;
+      --bg-gray: #f9fafb;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      color: var(--text-dark);
+      background: var(--bg-gray);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    header {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .nav-buttons button {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-dark);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .nav-buttons button:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .nav-buttons button.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    main {
+      padding: 3rem 0;
+      min-height: calc(100vh - 100px);
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    /* Speed Test View */
+    .test-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .test-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .test-header h1 {
+      font-size: 32px;
+      margin-bottom: 0.5rem;
+      color: var(--text-dark);
+    }
+
+    .test-header p {
+      color: var(--text-light);
+      font-size: 15px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric {
+      text-align: center;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .metric-value {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-unit {
+      font-size: 14px;
+      color: var(--text-light);
+    }
+
+    .metric.ping {
+      grid-column: 1 / -1;
+    }
+
+    .server-select {
+      margin-bottom: 2rem;
+    }
+
+    .server-select label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .server-select select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      background: var(--bg);
+      color: var(--text-dark);
+      cursor: pointer;
+    }
+
+    .server-select select:hover, .server-select select:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+
+    .button-primary {
+      width: 100%;
+      padding: 1rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .button-primary:hover:not(:disabled) {
+      background: #003d8a;
+    }
+
+    .button-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .status {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 13px;
+      color: var(--text-light);
+      min-height: 20px;
+    }
+
+    .result-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .button-secondary {
+      padding: 0.75rem 1rem;
+      background: var(--bg-gray);
+      color: var(--text-dark);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .button-secondary:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* History View */
+    .history-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .history-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-info {
+      flex: 1;
+    }
+
+    .history-date {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .history-results {
+      display: flex;
+      gap: 2rem;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .history-result {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .history-result strong {
+      color: var(--primary);
+    }
+
+    .history-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .button-small {
+      padding: 0.5rem 1rem;
+      background: var(--bg-gray);
+      color: var(--text-dark);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .button-small:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-light);
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 1rem;
+      opacity: 0.3;
+    }
+
+    /* Ad Placement */
+    .ad-space {
+      background: var(--bg);
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 2rem 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ad-space.leaderboard {
+      min-height: 90px;
+    }
+
+    .ad-space.sidebar {
+      min-height: 250px;
+    }
+
+    /* Layout adjustments */
+    @media (max-width: 768px) {
+      .metrics {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .metric {
+        border-right: 1px solid var(--border);
+        padding-right: 1.5rem;
+      }
+
+      .metric:nth-child(2) {
+        border-right: none;
+        padding-right: 0;
+      }
+
+      .metric-value {
+        font-size: 36px;
+      }
+
+      .result-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-buttons {
+        gap: 0.5rem;
+      }
+
+      .nav-buttons button {
+        padding: 0.5rem 0.75rem;
+        font-size: 12px;
+      }
+    }
+
+    /* Share Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .modal-header {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .modal-body {
+      margin-bottom: 1.5rem;
+      color: var(--text-light);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .share-link {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .share-link input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: monospace;
+    }
+
+    .share-link button {
+      padding: 0.75rem 1.25rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .email-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .email-form input {
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .email-form input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .loading-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--primary-light);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 1.5rem;
+    }
+
+    .loading-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <a href="#" class="logo">Speedometer</a>
+      <div class="nav-buttons">
+        <button class="nav-btn active" data-view="test">Test</button>
+        <button class="nav-btn" data-view="history">History</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <!-- TEST VIEW -->
+      <div id="test" class="view active">
+        <div class="test-card">
+          <div class="test-header">
+            <h1>Speed Test</h1>
+            <p>Measure your download, upload, and ping in real time</p>
+          </div>
+
+          <div class="metrics">
+            <div class="metric">
+              <div class="metric-label">Download</div>
+              <div class="metric-value" id="download">—</div>
+              <div class="metric-unit">Mbps</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">Upload</div>
+              <div class="metric-value" id="upload">—</div>
+              <div class="metric-unit">Mbps</div>
+            </div>
+            <div class="metric ping">
+              <div class="metric-label">Ping</div>
+              <div class="metric-value" id="ping">—</div>
+              <div class="metric-unit">ms</div>
+            </div>
+          </div>
+
+          <div class="server-select">
+            <label for="server">Test Server</label>
+            <select id="server">
+              <option value="us-east">🇺🇸 New York (US East)</option>
+              <option value="us-west">🇺🇸 Los Angeles (US West)</option>
+              <option value="eu-west">🇬🇧 London (EU West)</option>
+              <option value="eu-central">🇩🇪 Frankfurt (EU Central)</option>
+              <option value="ap-southeast">🇸🇬 Singapore (Asia SE)</option>
+              <option value="ap-south">🇮🇳 Mumbai (Asia South)</option>
+              <option value="ap-northeast">🇯🇵 Tokyo (Asia NE)</option>
+              <option value="au">🇦🇺 Sydney (Australia)</option>
+              <option value="ca">🇨🇦 Toronto (Canada)</option>
+              <option value="br">🇧🇷 São Paulo (Brazil)</option>
+            </select>
+          </div>
+
+          <button class="button-primary" id="startBtn" onclick="startTest()">Start Test</button>
+          <div class="status" id="status"></div>
+          <div class="loading-bar" id="loadingBar" style="display: none;">
+            <div class="loading-bar-fill"></div>
+          </div>
+
+          <div class="result-actions" id="resultActions" style="display: none;">
+            <button class="button-secondary" onclick="openShareModal()">Share Results</button>
+            <button class="button-secondary" onclick="emailResults()">Email Results</button>
+          </div>
+        </div>
+
+        <!-- Adsterra Ad - Leaderboard -->
+        <div class="ad-space leaderboard" style="border: none; padding: 0; min-height: auto; margin-top: 2rem;">
+          <script async="async" data-cfasync="false" src="https://pl31496157.profitableratecpmnetwork.com/670cda5696ca547b6e4680d79318ae97/invoke.js"></script>
+          <div id="container-670cda5696ca547b6e4680d79318ae97"></div>
+        </div>
+      </div>
+
+      <!-- HISTORY VIEW -->
+      <div id="history" class="view">
+        <h1 style="margin-bottom: 2rem;">Test History</h1>
+        <div class="history-grid" id="historyGrid">
+          <div class="empty-state">
+            <div class="empty-state-icon">📊</div>
+            <p>No tests yet. Run your first speed test to see results here.</p>
+          </div>
+        </div>
+
+        <!-- Monetag Ad - Leaderboard -->
+        <div class="ad-space leaderboard" style="border: none; padding: 0; min-height: auto; margin-top: 2rem;">
+          <div id="monetag-history-ad"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- SHARE MODAL -->
+  <div class="modal" id="shareModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeShareModal()">×</button>
+      <div class="modal-header">Share Your Results</div>
+      
+      <div class="modal-body">
+        <strong>Shareable Link</strong><br>
+        Copy and send to anyone
+      </div>
+      <div class="share-link">
+        <input type="text" id="shareLink" readonly>
+        <button onclick="copyShareLink()">Copy</button>
+      </div>
+
+      <div class="modal-body">
+        <strong>Email Results</strong><br>
+        Send detailed results via email
+      </div>
+      <form class="email-form" onsubmit="sendEmail(event)">
+        <input type="email" placeholder="Recipient email" id="recipientEmail" required>
+        <button type="submit" class="button-primary">Send Email</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // State management
+    const state = {
+      currentTest: null,
+      testHistory: [],
+      selectedServer: 'us-east'
+    };
+
+    // Load data from localStorage
+    function loadState() {
+      const saved = localStorage.getItem('speedTestState');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state.testHistory = parsed.testHistory || [];
+        state.selectedServer = parsed.selectedServer || 'us-east';
+      }
+      document.getElementById('server').value = state.selectedServer;
+    }
+
+    // Save state to localStorage
+    function saveState() {
+      localStorage.setItem('speedTestState', JSON.stringify({
+        testHistory: state.testHistory,
+        selectedServer: state.selectedServer
+      }));
+    }
+
+    // Navigation
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        
+        e.target.classList.add('active');
+        const viewName = e.target.dataset.view;
+        document.getElementById(viewName).classList.add('active');
+
+        if (viewName === 'history') {
+          renderHistory();
+        }
+      });
+    });
+
+    // Server selection
+    document.getElementById('server').addEventListener('change', (e) => {
+      state.selectedServer = e.target.value;
+      saveState();
+    });
+
+    // Speed test simulation (replace with real backend call)
+    async function startTest() {
+      const btn = document.getElementById('startBtn');
+      btn.disabled = true;
+
+      const metrics = ['download', 'upload', 'ping'];
+      metrics.forEach(m => {
+        document.getElementById(m).textContent = '—';
+      });
+
+      document.getElementById('status').textContent = 'Testing...';
+      document.getElementById('loadingBar').style.display = 'block';
+      document.getElementById('resultActions').style.display = 'none';
+
+      // Simulate test progression
+      try {
+        // Ping test
+        await new Promise(r => setTimeout(r, 500));
+        const ping = Math.round(Math.random() * 50 + 10);
+        document.getElementById('ping').textContent = ping;
+        updateLoadingBar(33);
+
+        // Download test
+        await new Promise(r => setTimeout(r, 1000));
+        const download = Math.round(Math.random() * 300 + 50 * 10) / 10;
+        document.getElementById('download').textContent = download;
+        updateLoadingBar(66);
+
+        // Upload test
+        await new Promise(r => setTimeout(r, 800));
+        const upload = Math.round(Math.random() * 100 + 20 * 10) / 10;
+        document.getElementById('upload').textContent = upload;
+        updateLoadingBar(100);
+
+        // Save result
+        const result = {
+          timestamp: new Date().toLocaleString(),
+          download,
+          upload,
+          ping,
+          server: document.getElementById('server').value
+        };
+        state.currentTest = result;
+        state.testHistory.unshift(result);
+        saveState();
+
+        document.getElementById('status').textContent = 'Test complete';
+        document.getElementById('resultActions').style.display = 'grid';
+
+        setTimeout(() => {
+          document.getElementById('loadingBar').style.display = 'none';
+          document.getElementById('status').textContent = '';
+        }, 1500);
+
+      } catch (err) {
+        document.getElementById('status').textContent = 'Test failed. Try again.';
+      }
+
+      btn.disabled = false;
+    }
+
+    function updateLoadingBar(percent) {
+      document.querySelector('.loading-bar-fill').style.width = percent + '%';
+    }
+
+    // Sharing
+    function openShareModal() {
+      if (!state.currentTest) return;
+      const baseUrl = window.location.origin + window.location.pathname;
+      const resultId = Math.random().toString(36).substr(2, 9);
+      document.getElementById('shareLink').value = `${baseUrl}?result=${resultId}`;
+      document.getElementById('shareModal').classList.add('active');
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').classList.remove('active');
+    }
+
+    function copyShareLink() {
+      const link = document.getElementById('shareLink');
+      link.select();
+      document.execCommand('copy');
+      alert('Link copied!');
+    }
+
+    function emailResults() {
+      openShareModal();
+    }
+
+    function sendEmail(e) {
+      e.preventDefault();
+      const email = document.getElementById('recipientEmail').value;
+      if (!state.currentTest) return;
+
+      // This would call your backend API to send email
+      const { download, upload, ping, timestamp } = state.currentTest;
+      console.log('Sending email to:', email);
+      console.log('Results:', { download, upload, ping, timestamp });
+      
+      alert(`Results would be sent to ${email}. Backend integration needed.`);
+      closeShareModal();
+    }
+
+    // History rendering
+    function renderHistory() {
+      const grid = document.getElementById('historyGrid');
+      
+      if (state.testHistory.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📊</div>
+            <p>No tests yet. Run your first speed test to see results here.</p>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = state.testHistory.map((result, idx) => `
+        <div class="history-card">
+          <div class="history-info">
+            <div class="history-date">${result.timestamp}</div>
+            <div class="history-results">
+              <div class="history-result">
+                <span>↓</span>
+                <strong>${result.download}</strong> Mbps
+              </div>
+              <div class="history-result">
+                <span>↑</span>
+                <strong>${result.upload}</strong> Mbps
+              </div>
+              <div class="history-result">
+                <span>⟲</span>
+                <strong>${result.ping}</strong> ms
+              </div>
+            </div>
+          </div>
+          <div class="history-actions">
+            <button class="button-small" onclick="shareResult(${idx})">Share</button>
+            <button class="button-small" onclick="deleteResult(${idx})">Delete</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function shareResult(idx) {
+      state.currentTest = state.testHistory[idx];
+      openShareModal();
+    }
+
+    function deleteResult(idx) {
+      if (confirm('Delete this test result?')) {
+        state.testHistory.splice(idx, 1);
+        saveState();
+        renderHistory();
+      }
+    }
+
+    // Initialize
+    loadState();
+  </script>
+
+  <!-- Monetag Ad Network -->
+  <script src="https://cdn.monetag.com/monetag.js"></script>
+</body>
+</html>
